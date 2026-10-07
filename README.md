@@ -1,2 +1,10 @@
 # LIBERTAS AVT CAEDES
-A top-down shooter made in Unity.
+A lone soldier must infiltrate an abandoned HQ.
+
+Their goals are the following:
+
+LIBERATE OBSIDES.
+PURGATE ACOLYTOS ET CHIMAERAS.
+CAPITE THESAUROS FURTIVOS.
+SUPERVĪVE.
+(The telemetry gathering is for a plenar event.)
