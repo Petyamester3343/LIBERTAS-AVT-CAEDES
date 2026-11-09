@@ -3,6 +3,22 @@
   "WorkspaceRootPath": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\telemetry\\playertelemetry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\telemetry\\playertelemetry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\core\\gameengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\core\\gameengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\entities\\acolyte.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\entities\\acolyte.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -23,18 +39,6 @@
       "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\ui\\minimaprenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\telemetry\\telemetryevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\telemetry\\telemetryevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\telemetry\\telemetrybus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\telemetry\\telemetrybus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\telemetry\\csvtelemetrylogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\telemetry\\csvtelemetrylogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\items\\pickupitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\items\\pickupitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -47,24 +51,12 @@
       "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\geometry\\eldritchgeomerty.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\entities\\hostage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\entities\\hostage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\entities\\chimera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\entities\\chimera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\entities\\acolyte.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\entities\\acolyte.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\core\\gameengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|solutionrelative:libertas avt caedes\\core\\gameengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C6F8BCBC-D639-9300-C41E-CBEC5F452FFD}|LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj|x:\\uni\\j\u00E1szn\\libertas avt caedes\\libertas avt caedes\\libertas avt caedes.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -78,102 +70,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "TelemetryEvent.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\TelemetryEvent.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Telemetry\\TelemetryEvent.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\TelemetryEvent.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Telemetry\\TelemetryEvent.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-05T16:48:48.307Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "EldritchGeomerty.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-29T16:56:27.665Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 3,
               "Title": "Player.cs",
               "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Player.cs",
               "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Entities\\Player.cs",
               "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Player.cs",
               "RelativeToolTip": "LIBERTAS AVT CAEDES\\Entities\\Player.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAK0AAAAwAAAAAAAAAA==",
+              "ViewState": "AgIAAJAAAAAAAAAAAAArwKYAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-02T09:45:38.779Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "MinimapRenderer.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T20:31:27.615Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CsvTelemetryLogger.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\CsvTelemetryLogger.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Telemetry\\CsvTelemetryLogger.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\CsvTelemetryLogger.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Telemetry\\CsvTelemetryLogger.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T13:58:30.793Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "DarkHypercubeRitual.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T11:34:00.4Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Hostage.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T11:24:27.885Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "GoreAndTracers.cs",
               "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Geometry\\GoreAndTracers.cs",
               "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Geometry\\GoreAndTracers.cs",
@@ -181,12 +95,11 @@
               "RelativeToolTip": "LIBERTAS AVT CAEDES\\Geometry\\GoreAndTracers.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAEAAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T09:26:41.433Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-02T09:26:41.433Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "PickupItem.cs",
               "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Items\\PickupItem.cs",
               "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Items\\PickupItem.cs",
@@ -194,38 +107,11 @@
               "RelativeToolTip": "LIBERTAS AVT CAEDES\\Items\\PickupItem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADcAAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T09:31:28.184Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-02T09:31:28.184Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "LabyrinthLevel.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T11:38:38.284Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Pathfinder.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T17:20:33.278Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
               "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Program.cs",
               "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Program.cs",
@@ -238,6 +124,104 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "GameEngine.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
+              "ViewState": "AgIAAJUDAAAAAAAAAAAswGYDAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-02T12:08:24.495Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Acolyte.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-02T11:27:50.632Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MinimapRenderer.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\UI\\MinimapRenderer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-02T20:31:27.615Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Hostage.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Entities\\Hostage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-02T11:24:27.885Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DarkHypercubeRitual.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\World\\DarkHypercubeRitual.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-02T11:34:00.4Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "LabyrinthLevel.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\World\\LabyrinthLevel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-02T11:38:38.284Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Pathfinder.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\World\\Pathfinder.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-02T17:20:33.278Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "EldritchGeomerty.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Geometry\\EldritchGeomerty.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-29T16:56:27.665Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 13,
               "Title": "Chimera.cs",
               "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Chimera.cs",
@@ -246,51 +230,11 @@
               "RelativeToolTip": "LIBERTAS AVT CAEDES\\Entities\\Chimera.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T11:32:06.51Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-02T11:32:06.51Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 14,
-              "Title": "Acolyte.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Entities\\Acolyte.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAABWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T11:27:50.632Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "TelemetryBus.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\TelemetryBus.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Telemetry\\TelemetryBus.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\TelemetryBus.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Telemetry\\TelemetryBus.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T15:43:49.654Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "GameEngine.cs",
-              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
-              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
-              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
-              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Core\\GameEngine.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T12:08:24.495Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
               "Title": "LIBERTAS AVT CAEDES.csproj",
               "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj",
               "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES.csproj",
@@ -299,6 +243,25 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2026-10-29T16:39:07.436Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PlayerTelemetry.cs",
+              "DocumentMoniker": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\PlayerTelemetry.cs",
+              "RelativeDocumentMoniker": "LIBERTAS AVT CAEDES\\Telemetry\\PlayerTelemetry.cs",
+              "ToolTip": "X:\\uni\\J\u00C1SzN\\LIBERTAS AVT CAEDES\\LIBERTAS AVT CAEDES\\Telemetry\\PlayerTelemetry.cs",
+              "RelativeToolTip": "LIBERTAS AVT CAEDES\\Telemetry\\PlayerTelemetry.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAgwDIAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-08T10:40:51.367Z",
+              "EditorCaption": ""
             }
           ]
         }

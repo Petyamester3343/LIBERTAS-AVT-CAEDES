@@ -86,18 +86,13 @@ namespace LIBERTAS_AVT_CAEDES.Entities
             LevelDeaths = 0;
         }
 
-        public void UpdateTelemetryDistance(float dt, int stage)
+        public void UpdateTelemetryDistance(float dt)
         {
             _dist30sAcc += Vector3.Distance(Position, _prevPos);
             _prevPos = Position;
             _dist30sTimer += dt;
 
-            if (_dist30sTimer >= 30f)
-            {
-                // Log telemetry
-                TelemetryBus.Publish(stage, TelemetryEventType.DistanceTraversedIn30s, Position, $"Meters={_dist30sAcc:F2}");
-                _dist30sAcc = _dist30sTimer = 0f;
-            }
+            if (_dist30sTimer >= 30f) _dist30sAcc = _dist30sTimer = 0f;
         }
 
         public void ApplyPickup(PickupKind kind, Random rng)
@@ -169,7 +164,7 @@ namespace LIBERTAS_AVT_CAEDES.Entities
             }
         }
 
-        public void TakeDamage(float dmg, string src, int stage, Random rng, Action<Vector3, bool, int> spawnGore)
+        public void TakeDamage(float dmg, Random rng, Action<Vector3, bool, int> spawnGore)
         {
             if (rng.NextDouble() < MathF.Min(.25f, TalismanIntangible * .08f)) return;
 
@@ -187,8 +182,7 @@ namespace LIBERTAS_AVT_CAEDES.Entities
 
             if (HP <= 0f)
             {
-                LevelDeaths++;
-                TelemetryBus.Publish(stage, TelemetryEventType.PlayerDied, Position, $"DeathCountOnLevel={LevelDeaths};Killer={src}");
+                PlayerTelemetry.PlayerDied++;
                 HP = MaxHP;
                 Position = Vector3.Zero;
                 CoverState = CoverMode.Free;

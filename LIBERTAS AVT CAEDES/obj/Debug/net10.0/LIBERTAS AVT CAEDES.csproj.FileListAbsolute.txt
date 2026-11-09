@@ -21,3 +21,4 @@ X:\uni\JÁSzN\LIBERTAS AVT CAEDES\LIBERTAS AVT CAEDES\bin\Debug\net10.0\runtimes
 X:\uni\JÁSzN\LIBERTAS AVT CAEDES\LIBERTAS AVT CAEDES\bin\Debug\net10.0\runtimes\osx-x64\native\libraylib.dylib
 X:\uni\JÁSzN\LIBERTAS AVT CAEDES\LIBERTAS AVT CAEDES\bin\Debug\net10.0\runtimes\win-x64\native\raylib.dll
 X:\uni\JÁSzN\LIBERTAS AVT CAEDES\LIBERTAS AVT CAEDES\bin\Debug\net10.0\runtimes\win-x86\native\raylib.dll
+X:\uni\JÁSzN\LIBERTAS AVT CAEDES\LIBERTAS AVT CAEDES\obj\Debug\net10.0\LIBERTAS AVT CAEDES.sourcelink.json

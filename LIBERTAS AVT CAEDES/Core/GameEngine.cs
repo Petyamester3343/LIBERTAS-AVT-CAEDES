@@ -26,7 +26,6 @@ namespace LIBERTAS_AVT_CAEDES.Core
             _adaptivePerceptionMult = 1f;
 
         private ScreenState _screen = ScreenState.ConsentScreen;
-        private readonly CsvTelemetryLogger _logger = new();
         private readonly Random _rng = new();
         private readonly Player _player = new();
         private readonly static LabyrinthLevel _level = new();
@@ -40,6 +39,8 @@ namespace LIBERTAS_AVT_CAEDES.Core
             _surveyAggro = 3,
             _surveyStealth = 3,
             _surveyExploration = 3;
+
+        private readonly Dictionary<int, double> LevelDiscoveryRates = []; // levelIdx --> level's discoveryRate
 
         public GameEngine()
         {
@@ -87,7 +88,9 @@ namespace LIBERTAS_AVT_CAEDES.Core
 
         private void StartSession(bool consent)
         {
-            _logger.SetConsent(consent);
+            PlayerTelemetry.ResetSession();
+            PlayerTelemetry.ConsentGranted = consent;
+            LevelDiscoveryRates.Clear();
             _level.Generate(_currentStage, _adaptiveHPMult, _rng);
             _player.ResetForLevel(Vector3.Zero);
             Raylib.HideCursor();
@@ -150,6 +153,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
             (int, int) currCell = Pathfinder.ToCell(_player.Position, LabyrinthLevel.CellSize);
             int sightCells = _player.HasNightHalo ? 2 : 1;
             bool newlyDiscovered = false;
+            double ratio = 0d;
 
             for (int dx = -sightCells, dz = -sightCells; dx <= sightCells && dz <= sightCells; dx++, dz++)
             {
@@ -162,13 +166,9 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 }
             }
 
-            if (newlyDiscovered)
-            {
-                float ratio = (float)_level.DiscoveredCells.Count / _level.WalkableCells.Count;
-                TelemetryBus.Publish(_currentStage, TelemetryEventType.LabyrinthDiscoveryRate, _player.Position,
-                    $"Discovered={_level.DiscoveredCells.Count}/{_level.WalkableCells.Count};Ratio={ratio:F3}");
-            }
-            _player.UpdateTelemetryDistance(dt, _currentStage);
+            if (newlyDiscovered) ratio = 100d * (_level.DiscoveredCells.Count / _level.WalkableCells.Count);
+
+            _player.UpdateTelemetryDistance(dt);
 
             foreach (Hostage h in _level.Hostages.Where(h => !h.Saved && !h.Dead))
             {
@@ -176,9 +176,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 if (Vector3.Distance(h.Position, _level.BrightHypercubeArtifactPos) < 2.2f)
                 {
                     h.Saved = true;
-                    int savedCount = _level.Hostages.Count(x => !x.Saved);
-                    TelemetryBus.Publish(_currentStage, TelemetryEventType.HostagesTransported, h.Position,
-                        $"Saved={savedCount}/{_level.Hostages.Count};Ratio={(float)savedCount / _level.Hostages.Count:F3}");
+                    PlayerTelemetry.HostagesTransported = (uint)_level.Hostages.Count(x => x.Saved);
                 }
             }
 
@@ -186,10 +184,8 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 if (Vector3.Distance(_player.Position, p.Position) < 1.5f)
                 {
                     p.Acquired = true;
+                    PlayerTelemetry.AcquiredPickups = (uint)_level.Pickups.Count(p => p.Acquired);
                     _player.ApplyPickup(p.Kind, _rng);
-                    int colCount = _level.Pickups.Count(x => x.Acquired);
-                    TelemetryBus.Publish(_currentStage, TelemetryEventType.PickupAcquired, _player.Position,
-                        $"Item={p.Kind};Acquired={colCount}/{_level.Pickups.Count};Ratio={(float)colCount / _level.Pickups.Count:F3}");
                 }
 
             UpdateHostilesAndRituals(dt);
@@ -202,6 +198,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 {
                     _adaptiveHPMult = 1f + (_player.TotalPickupsAcquired * .12f);
                     _adaptivePerceptionMult = 1f + (_player.TotalPickupsAcquired * .08f);
+                    LevelDiscoveryRates.Add(_currentStage, ratio);
                     _currentStage++;
                     _level.Generate(_currentStage, _adaptiveHPMult, _rng);
                     _player.ResetForLevel(Vector3.Zero);
@@ -212,8 +209,9 @@ namespace LIBERTAS_AVT_CAEDES.Core
 
         private void UpdatePlayerMovementAndCover(float dt)
         {
-            bool isCrouching = Raylib.IsKeyDown(KeyboardKey.LeftControl);
-            bool isSprinting = Raylib.IsKeyDown(KeyboardKey.LeftShift) && !isCrouching && _player.Stamina > 5f;
+            bool
+                isCrouching = Raylib.IsKeyDown(KeyboardKey.LeftControl),
+                isSprinting = Raylib.IsKeyDown(KeyboardKey.LeftShift) && !isCrouching && _player.Stamina > 5f;
 
             // Screen-Relative WASD: W = Up (-Z), S = Down (+Z), A = Strafe Left (-X), D = Strafe Right (+X)
             Vector3 moveInput = Vector3.Zero;
@@ -222,18 +220,18 @@ namespace LIBERTAS_AVT_CAEDES.Core
             if (Raylib.IsKeyDown(KeyboardKey.A)) moveInput.X -= 1f;
             if (Raylib.IsKeyDown(KeyboardKey.D)) moveInput.X += 1f;
 
-            if (moveInput.LengthSquared() > 0.001f)
+            if (moveInput.LengthSquared() > 1e-3f)
                 moveInput = Vector3.Normalize(moveInput);
 
             // Toggle Cover with Q
-            if (Raylib.IsKeyPressed(KeyboardKey.Q) && _player.CoverState != CoverMode.Vaulting)
+            if (Raylib.IsKeyPressed(KeyboardKey.Q) && _player.CoverState is not CoverMode.Vaulting)
             {
-                if (_player.CoverState == CoverMode.Free)
+                if (_player.CoverState is CoverMode.Free)
                 {
                     foreach (var cov in _level.Covers)
                     {
-                        Vector3 covCenter = (cov.Min + cov.Max) * 0.5f;
-                        Vector3 covHalf = (cov.Max - cov.Min) * 0.5f;
+                        Vector3 covCenter = (cov.Min + cov.Max) * .5f;
+                        Vector3 covHalf = (cov.Max - cov.Min) * .5f;
                         Vector3 flatCenter = new(covCenter.X, 0, covCenter.Z);
 
                         if (Vector3.Distance(_player.Position, flatCenter) < 2.6f)
@@ -247,7 +245,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                                 float signZ = diff.Z >= 0 ? 1f : -1f;
                                 _coverNormal = new Vector3(0, 0, signZ);
                                 _player.CoverAnchor = new Vector3(
-                                    Math.Clamp(_player.Position.X, cov.Min.X + 0.3f, cov.Max.X - 0.3f),
+                                    Math.Clamp(_player.Position.X, cov.Min.X + .3f, cov.Max.X - .3f),
                                     0f,
                                     flatCenter.Z + signZ * (covHalf.Z + 0.55f));
                             }
@@ -256,9 +254,9 @@ namespace LIBERTAS_AVT_CAEDES.Core
                                 float signX = diff.X >= 0 ? 1f : -1f;
                                 _coverNormal = new Vector3(signX, 0, 0);
                                 _player.CoverAnchor = new Vector3(
-                                    flatCenter.X + signX * (covHalf.X + 0.55f),
+                                    flatCenter.X + signX * (covHalf.X + .55f),
                                     0f,
-                                    Math.Clamp(_player.Position.Z, cov.Min.Z + 0.3f, cov.Max.Z - 0.3f));
+                                    Math.Clamp(_player.Position.Z, cov.Min.Z + .3f, cov.Max.Z - .3f));
                             }
 
                             if (!_level.CollidesWithWorld(_player.CoverAnchor, ignoreCovers: true))
@@ -270,27 +268,25 @@ namespace LIBERTAS_AVT_CAEDES.Core
                         }
                     }
                 }
-                else
-                {
-                    _player.CoverState = CoverMode.Free;
-                }
+                else _player.CoverState = CoverMode.Free;
             }
 
             // Cover, Peeking, and Vaulting State Machine
-            if (_player.CoverState == CoverMode.InCover || _player.CoverState == CoverMode.Peeking)
+            if (_player.CoverState is CoverMode.InCover or CoverMode.Peeking)
             {
-                Vector3 covCenter = (_player.ActiveCoverBox.Min + _player.ActiveCoverBox.Max) * 0.5f;
-                Vector3 covHalf = (_player.ActiveCoverBox.Max - _player.ActiveCoverBox.Min) * 0.5f;
+                Vector3
+                    covCenter = (_player.ActiveCoverBox.Min + _player.ActiveCoverBox.Max) * .5f,
+                    covHalf = (_player.ActiveCoverBox.Max - _player.ActiveCoverBox.Min) * .5f;
 
                 // Pressing the WASD key pointing directly into the cover face
-                bool pressingIntoCover = Vector3.Dot(moveInput, _coverNormal) < -0.45f;
+                bool pressingIntoCover = Vector3.Dot(moveInput, _coverNormal) < -.45f;
 
                 if (Raylib.IsKeyPressed(KeyboardKey.Space) && pressingIntoCover)
                 {
                     Vector3 oppositeOffset = new(
-                        -_coverNormal.X * (covHalf.X + 0.65f),
+                        -_coverNormal.X * (covHalf.X + .65f),
                         0f,
-                        -_coverNormal.Z * (covHalf.Z + 0.65f));
+                        -_coverNormal.Z * (covHalf.Z + .65f));
 
                     Vector3 candidateTarget = new(
                         _coverNormal.X != 0 ? covCenter.X + oppositeOffset.X : _player.CoverAnchor.X,
@@ -305,7 +301,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                         _player.CoverState = CoverMode.Vaulting;
                     }
                 }
-                else if (moveInput.LengthSquared() > 0.01f)
+                else if (moveInput.LengthSquared() > 1e-2f)
                 {
                     // Lean / Peek along the cover edge using WASD
                     Vector3 tangent = new(MathF.Abs(_coverNormal.Z), 0, MathF.Abs(_coverNormal.X));
@@ -323,11 +319,11 @@ namespace LIBERTAS_AVT_CAEDES.Core
                     _player.Position = _player.CoverAnchor;
                 }
             }
-            else if (_player.CoverState == CoverMode.Vaulting)
+            else if (_player.CoverState is CoverMode.Vaulting)
             {
                 _player.VaultProgress += dt * 2.8f;
                 _player.Position = Vector3.Lerp(_vaultStartPos, _player.VaultTarget, Math.Clamp(_player.VaultProgress, 0f, 1f));
-                if (_player.VaultProgress >= 1.0f)
+                if (_player.VaultProgress >= 1f)
                 {
                     _player.Position = _player.VaultTarget;
                     _player.CoverState = CoverMode.Free;
@@ -336,11 +332,10 @@ namespace LIBERTAS_AVT_CAEDES.Core
             else
             {
                 // Free Screen-Relative Movement (independent X and Z axis sliding)
-                float speed = isCrouching ? 3.5f : (isSprinting ? 9.5f : 6.0f);
-                if (isSprinting && moveInput.LengthSquared() > 0)
-                    _player.Stamina = MathF.Max(0, _player.Stamina - 22f * dt);
-                else
-                    _player.Stamina = MathF.Min(_player.MaxStamina, _player.Stamina + 14f * dt);
+                float speed = isCrouching ? 3.5f : (isSprinting ? 9.5f : 6f);
+                _player.Stamina = (isSprinting && moveInput.LengthSquared() > 0)
+                    ? MathF.Max(0, _player.Stamina - 22f * dt)
+                    : MathF.Min(_player.MaxStamina, _player.Stamina + 14f * dt);
 
                 Vector3 tryX = new(_player.Position.X + moveInput.X * speed * dt, 0f, _player.Position.Z);
                 if (!_level.CollidesWithWorld(tryX))
@@ -378,7 +373,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 _ => .25f
             };
 
-            baseDmg *= (_player.HasBlessedMod ? 1.1f : 1) * (_rng.NextDouble() < _player.TalismanCrit * .1 ? 2f : 1);
+            baseDmg *= (_player.HasBlessedMod ? 1.1f : 1) * (_rng.NextDouble() < _player.TalismanCrit * 1e-1 ? 2f : 1);
 
             int rays = _player.CurrentWeapon is WeaponType.SemiAutoShotgun ? 5 : 1;
             Vector3
@@ -407,8 +402,8 @@ namespace LIBERTAS_AVT_CAEDES.Core
                         rayEnd = muzzle + dir * col.Distance;
                         a.HP -= baseDmg;
                         if (_player.HasIncendiaryMod) a.BurnDuration = 4f;
-                        SpawnGore(a.Position, false, 6);
                         CheckAcolyteDeath(a);
+                        if (!a.Dead) SpawnGore(a.Position, false, 6);
                         break;
                     }
                 }
@@ -421,12 +416,8 @@ namespace LIBERTAS_AVT_CAEDES.Core
                         rayEnd = muzzle + dir * col.Distance;
                         c.HP -= baseDmg;
                         if (_player.HasIncendiaryMod) c.BurnDuration = 4f;
-                        SpawnGore(c.Position, false, 8);
-                        if (c.HP <= 0)
-                        {
-                            c.Dead = true;
-                            SpawnGore(c.Position, true, 22);
-                        }
+                        CheckChimeraDeath(c);
+                        if (!c.Dead) SpawnGore(c.Position, false, 8);
                         break;
                     }
                 }
@@ -449,9 +440,17 @@ namespace LIBERTAS_AVT_CAEDES.Core
             {
                 a.Dead = true;
                 SpawnGore(a.Position, true, 14);
-                int killed = _level.Acolytes.Count(x => x.Dead);
-                TelemetryBus.Publish(_currentStage, TelemetryEventType.AcolyteKilled, a.Position,
-                    $"Killed={killed}/{_level.Acolytes.Count};Ratio={(float)killed / _level.Acolytes.Count:F3}");
+                PlayerTelemetry.AcolytesKilled = (uint)_level.Acolytes.Count(a => a.Dead);
+            }
+        }
+
+        private void CheckChimeraDeath(Chimera c)
+        {
+            if (c.HP <= 0 && !c.Dead)
+            {
+                c.Dead = true;
+                SpawnGore(c.Position, true, 22);
+                PlayerTelemetry.ChimerasKilled = (uint)_level.Chimeras.Count(c => c.Dead);
             }
         }
 
@@ -474,7 +473,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
             Vector3 end = to + new Vector3(0, .8f, 0);
             Vector3 diff = end - start;
             float dist = diff.Length();
-            if (dist < .01f) return true;
+            if (dist < 1e-2f) return true;
 
             Ray ray = new(start, diff / dist);
 
@@ -496,14 +495,14 @@ namespace LIBERTAS_AVT_CAEDES.Core
             float entityHalfSize = .35f)
         {
             List<Vector3> path = Pathfinder.FindPath(entityPos, tgtPos, _level.WalkableCells, LabyrinthLevel.CellSize);
-            
+
             Vector3 nextNode = path.Count > 1 ? path[1] : tgtPos;
             if (path.Count > 1 && Vector3.Distance(new(entityPos.X, 0, entityPos.Z), path[0]) > 1.8f)
                 nextNode = path[0];
 
             Vector3 dir = nextNode - entityPos;
             dir.Y = 0;
-            if (dir.LengthSquared() <= .01f) return;
+            if (dir.LengthSquared() <= 1e-2f) return;
 
             dir = Vector3.Normalize(dir);
 
@@ -520,7 +519,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                         float sideSign = Vector3.Dot(entityPos - covCenter, perp) >= 0 ? 1f : -1f;
                         dir = Vector3.Normalize(dir + perp * (sideSign * 1.2f));
                         break;
-                     }
+                    }
                 }
             }
 
@@ -543,7 +542,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 if (a.BurnDuration > 0f)
                 {
                     a.BurnDuration -= dt;
-                    a.HP = 12f * dt;
+                    a.HP -= 12f * dt;
                     CheckAcolyteDeath(a);
                     if (a.Dead) continue;
                 }
@@ -585,8 +584,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                         {
                             a.State = AcolyteState.Combat;
                             a.LastKnownPlayerPosition = _player.Position;
-                            TelemetryBus.Publish(_currentStage, TelemetryEventType.PlayerBustedAndAttacked, _player.Position,
-                                $"AcolytePosition={a.Position};FlashlightUsed={_player.FlashlightOn}");
+                            PlayerTelemetry.PlayerBusted++;
                         }
                     }
                 }
@@ -631,7 +629,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                                 SpawnGore(nearbyHostage.Position, true, 12);
                             }
                         }
-                        else _player.TakeDamage(15f, "AcolyteRaycast", _currentStage, _rng, SpawnGore);
+                        else _player.TakeDamage(15f, _rng, SpawnGore);
                     }
                 }
             }
@@ -649,7 +647,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                     if (_level.ActiveRitual.Countdown <= 0f)
                     {
                         Vector3 safeChimeraSpawn = _level.GetNearestWalkableCellCenter(_level.ActiveRitual.Position, yHeight: 0f);
-                        
+
                         _level.Chimeras.Add(new()
                         {
                             Position = safeChimeraSpawn,
@@ -667,12 +665,8 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 {
                     c.BurnDuration -= dt;
                     c.HP -= 12f * dt;
-                    if (c.HP <= 0f)
-                    {
-                        c.Dead = true;
-                        SpawnGore(c.Position, true, 22);
-                        continue;
-                    }
+                    CheckChimeraDeath(c);
+                    if (c.Dead) continue;
                 }
 
                 Vector3 toPlayer = _player.Position - c.Position;
@@ -682,7 +676,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 if (toPlayer.Length() > 1.85f)
                     MoveAlongAStar(ref c.Position, _player.Position, 5.4f, dt, ignoreCovers: true, entityHalfSize: .95f);
                 else
-                    _player.TakeDamage(25f * dt, "ChimeraMelee", _currentStage, _rng, SpawnGore);
+                    _player.TakeDamage(25f * dt, _rng, SpawnGore);
             }
 
             for (int i = _level.Gore.Count - 1; i >= 0; i--)
@@ -738,8 +732,16 @@ namespace LIBERTAS_AVT_CAEDES.Core
             Rectangle submitBtn = new(190, 495, 480, 60);
             if (Raylib.IsKeyPressed(KeyboardKey.Enter) || (isLMBClicked && Raylib.CheckCollisionPointRec(mousePos, submitBtn)))
             {
-                TelemetryBus.Publish(_currentStage, TelemetryEventType.PostGameSurveySubmitted, _player.Position,
-                    $"SelfReportAggression={_surveyAggro};SelfReportStealth={_surveyStealth};SelfReportExploration={_surveyExploration}");
+                PlayerTelemetry.SelfSurveyAggro = (ushort)_surveyAggro;
+                PlayerTelemetry.SelfSurveyStealth = (ushort)_surveyStealth;
+                PlayerTelemetry.SelfSurveyDiscovery = (ushort)_surveyExploration;
+
+                PlayerTelemetry.EnemiesKilled = PlayerTelemetry.AcolytesKilled + PlayerTelemetry.ChimerasKilled;
+
+                PlayerTelemetry.RealSurveyAggro = 100 * (1 / PlayerTelemetry.EnemiesKilled) % 5 + 1;
+                PlayerTelemetry.RealSurveyStealth = 100 * (1 / PlayerTelemetry.PlayerBusted) % 5 + 1;
+                PlayerTelemetry.RealSurveyDiscovery = 100 * (1 / PlayerTelemetry.TotalDiscoveryRate) % 5 + 1;
+
                 _screen = ScreenState.Finished;
             }
         }
@@ -751,6 +753,12 @@ namespace LIBERTAS_AVT_CAEDES.Core
             foreach (BoundingBox w in _level.Walls)
             {
                 RayCollision hit = Raylib.GetRayCollisionBox(ray, w);
+                if (hit.Hit && hit.Distance < Vector3.Distance(start, end))
+                    end = start + dir * hit.Distance;
+            }
+            foreach (BoundingBox c in _level.Covers)
+            {
+                RayCollision hit = Raylib.GetRayCollisionBox(ray, c);
                 if (hit.Hit && hit.Distance < Vector3.Distance(start, end))
                     end = start + dir * hit.Distance;
             }
@@ -768,21 +776,21 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 case ScreenState.ConsentScreen: DrawConsentModal(); break;
                 case ScreenState.Playing:
                     {
-                        float time = (float)Raylib.GetTime();
+                        float t = (float)Raylib.GetTime();
                         Raylib.BeginMode3D(_cam);
 
-                        _level.DrawEnvironment(time);
-                        _level.ActiveRitual?.Draw(time, _player.Position, _level.WalkableCells, LabyrinthLevel.CellSize);
+                        _level.DrawEnvironment(t);
+                        _level.ActiveRitual?.Draw(t, _player.Position, _level.WalkableCells, LabyrinthLevel.CellSize);
 
                         foreach (GoreTriangle g in _level.Gore) g.Draw();
-                        foreach (PickupItem p in _level.Pickups) p.Draw(time);
+                        foreach (PickupItem p in _level.Pickups) p.Draw(t);
                         foreach (Hostage h in _level.Hostages) h.Draw();
                         foreach (Acolyte a in _level.Acolytes) a.Draw();
-                        foreach (Chimera c in _level.Chimeras) c.Draw(time);
+                        foreach (Chimera c in _level.Chimeras) c.Draw(t);
                         _player.Draw();
 
-                        foreach (var t in _level.Tracers)
-                            Raylib.DrawLine3D(t.Start, t.End, t.Color);
+                        foreach (RayTracer tracer in _level.Tracers)
+                            Raylib.DrawLine3D(tracer.Start, tracer.End, tracer.Color);
 
                         Raylib.EndMode3D();
 
@@ -792,12 +800,13 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 case ScreenState.PostGameForm: DrawSurveyModal(); break;
                 case ScreenState.Finished:
                     {
+                        PlayerTelemetry.TotalDiscoveryRate = LevelDiscoveryRates.Average(x => x.Value);
                         Raylib.DrawRectangle(140, 140, 1000, 440, new Color(14, 12, 22, 245));
                         Raylib.DrawRectangleLinesEx(new Rectangle(140, 140, 1000, 440), 3f, Color.Green);
                         Raylib.DrawText("RESEARCH TELEMETRY & SURVEY LOGGED", 180, 175, 28, Color.Green);
-                        Raylib.DrawText($"Session GUID: {_logger.AnonymTesterID}", 180, 225, 18, Color.Gold);
-                        Raylib.DrawText($"Self-Reported Ratings -> Aggression: {_surveyAggro}/5 | Stealth: {_surveyStealth}/5 | Exploration: {_surveyExploration}/5", 180, 265, 18, Color.RayWhite);
-                        Raylib.DrawText("Telemetry CSV successfully written to: libertas_telemetry.csv", 180, 330, 18, Color.LightGray);
+                        Raylib.DrawText($"Session GUID: {PlayerTelemetry.SessionGuid}", 180, 225, 18, Color.Gold);
+                        Raylib.DrawText($"Self-Reported Ratings -> Aggression: {PlayerTelemetry.SelfSurveyAggro}/5 | Stealth: {PlayerTelemetry.SelfSurveyStealth}/5 | Exploration: {PlayerTelemetry.SelfSurveyDiscovery}/5", 180, 265, 18, Color.RayWhite);
+                        Raylib.DrawText($"Telemetry CSV successfully written to: telemetry_{PlayerTelemetry.SessionGuid}.csv", 180, 330, 18, Color.LightGray);
                         Raylib.DrawText("Press ESC to exit testing suite.", 180, 420, 20, Color.Yellow);
                         break;
                     }
@@ -814,7 +823,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
             Raylib.DrawRectangle(16, 16, 430, 145, new(14, 12, 22, 220));
             Raylib.DrawRectangleLinesEx(new(16, 16, 430, 145), 2f, new(190, 25, 45, 255));
 
-            Raylib.DrawText($"STAGE {_currentStage}/{TOTAL_STAGES} // LIBERTAS AVT CAEDES", 28, 24, 20, Color.Red);
+            Raylib.DrawText($"LIBERTAS AVT CAEDES || STAGE {_currentStage}/{TOTAL_STAGES}", 28, 24, 20, Color.Red);
 
             // HP Bar
             float hpPct = Math.Clamp(_player.HP / _player.MaxHP, 0f, 1f);
@@ -859,7 +868,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                           $"Incend:{(_player.HasIncendiaryMod ? "YES" : "NO")} | " +
                           $"Bless:{(_player.HasBlessedMod ? "YES" : "NO")} | " +
                           $"Talismans(C/H/S/I/Sh): {_player.TalismanCrit}/{_player.TalismanHP}/{_player.TalismanStamina}/{_player.TalismanIntangible}/{_player.TalismanHexShield}";
-            Raylib.DrawText(mods, 28, 670, 16, Color.RayWhite);
+            Raylib.DrawText(mods, 28, 670, 15, Color.RayWhite);
 
             // Chimera Ritual Countdown Alert Banner
             if (_level.ActiveRitual is { Active: true })
@@ -870,12 +879,12 @@ namespace LIBERTAS_AVT_CAEDES.Core
             }
         }
 
-        private void DrawConsentModal()
+        private static void DrawConsentModal()
         {
             Raylib.DrawRectangle(140, 130, 1000, 440, new(16, 14, 24, 245));
             Raylib.DrawRectangleLinesEx(new(140, 130, 1000, 440), 3f, Color.Red);
             Raylib.DrawText("LIBERTAS AUT CAEDES // TELEMETRY CONSENT", 190, 175, 32, Color.Red);
-            Raylib.DrawText($"Anonymous Tester ID: {_logger.AnonymTesterID}", 190, 235, 20, Color.Gold);
+            Raylib.DrawText($"Anonymous Tester ID: {PlayerTelemetry.SessionGuid}", 190, 235, 20, Color.Gold);
             Raylib.DrawText("This research build uses an Observer-Logger architecture to record anonymous", 190, 285, 20, Color.RayWhite);
             Raylib.DrawText("gameplay ratios (hostages, combat, 30s traversal distance, and DFS discovery).", 190, 315, 20, Color.RayWhite);
 
@@ -941,6 +950,6 @@ namespace LIBERTAS_AVT_CAEDES.Core
             Raylib.DrawLineEx(mPos + new Vector2(0, 4), mPos + new Vector2(0, 14), 2f, Color.Lime);
         }
 
-        public void Dispose() => _logger.Dispose();
+        public void Dispose() => PlayerTelemetry.ExportSessionCsv();
     }
 }
