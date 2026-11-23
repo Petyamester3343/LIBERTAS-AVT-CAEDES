@@ -210,8 +210,8 @@ namespace LIBERTAS_AVT_CAEDES.Entities
                 Vector3
                     c1 = basePos + new Vector3(MathF.Cos(angle) * .65f, .02f, MathF.Sin(angle) * .65f),
                     c2 = basePos + new Vector3(MathF.Cos(nextAngle) * .65f, .02f, MathF.Sin(nextAngle) * .65f);
-                EldritchGeomertyDrawer.DrawThickLine3D(c1, apex, .035f, Color.Black);
-                EldritchGeomertyDrawer.DrawThickLine3D(c1, c2, .035f, Color.Black);
+                EldritchGeometryDrawer.DrawThickLine3D(c1, apex, .035f, Color.Black);
+                EldritchGeometryDrawer.DrawThickLine3D(c1, c2, .035f, Color.Black);
             }
 
             // Stackable Pentagonal Prism Talismans
@@ -219,7 +219,7 @@ namespace LIBERTAS_AVT_CAEDES.Entities
             for (int i = 0; i < Math.Min(totalTalismans, 8); i++)
             {
                 Vector3 stackPos = Position + new Vector3(-.75f, .3f + i * .15f, -.5f);
-                EldritchGeomertyDrawer.DrawRegularPrism(stackPos, 5, .18f, .18f, .08f, Color.Gold);
+                EldritchGeometryDrawer.DrawRegularPrism(stackPos, 5, .18f, .18f, .08f, Color.Gold);
             }
 
             // Night goggle HALO
@@ -240,7 +240,7 @@ namespace LIBERTAS_AVT_CAEDES.Entities
                 Vector3
                     flDir = new(MathF.Sin(RotationY), 0, MathF.Cos(RotationY)),
                     tip = GameEngine.GetClippedFlashlightEndpoint(Position + new Vector3(0, .5f, 0), flDir, 12f);
-                EldritchGeomertyDrawer
+                EldritchGeometryDrawer
                     .DrawThickLine3D(
                     Position + new Vector3(0, .5f, 0),
                     tip,

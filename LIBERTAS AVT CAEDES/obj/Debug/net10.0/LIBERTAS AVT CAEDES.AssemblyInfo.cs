@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LIBERTAS AVT CAEDES")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2b512612d52ef32634b8618d333b13a0813b7606")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d60705e68695b70a7df08c4adea45c0db9d14a70")]
 [assembly: System.Reflection.AssemblyProductAttribute("LIBERTAS AVT CAEDES")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LIBERTAS AVT CAEDES")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

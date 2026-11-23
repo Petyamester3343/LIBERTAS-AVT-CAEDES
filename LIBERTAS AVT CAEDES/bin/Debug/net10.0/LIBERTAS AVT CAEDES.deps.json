@@ -18,39 +18,46 @@
         "runtime": {
           "lib/net10.0/Raylib-cs.dll": {
             "assemblyVersion": "8.1.0.0",
-            "fileVersion": "8.1.0.0"
+            "fileVersion": "8.1.0.0",
+            "localPath": "Raylib-cs.dll"
           }
         },
         "runtimeTargets": {
           "runtimes/browser-wasm/native/raylib.a": {
             "rid": "browser-wasm",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "0.0.0.0",
+            "localPath": "runtimes/browser-wasm/native/raylib.a"
           },
           "runtimes/linux-x64/native/libraylib.so": {
             "rid": "linux-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "0.0.0.0",
+            "localPath": "runtimes/linux-x64/native/libraylib.so"
           },
           "runtimes/osx-arm64/native/libraylib.dylib": {
             "rid": "osx-arm64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "0.0.0.0",
+            "localPath": "runtimes/osx-arm64/native/libraylib.dylib"
           },
           "runtimes/osx-x64/native/libraylib.dylib": {
             "rid": "osx-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "0.0.0.0",
+            "localPath": "runtimes/osx-x64/native/libraylib.dylib"
           },
           "runtimes/win-x64/native/raylib.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "6.0.0.0"
+            "fileVersion": "6.0.0.0",
+            "localPath": "runtimes/win-x64/native/raylib.dll"
           },
           "runtimes/win-x86/native/raylib.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "6.0.0.0"
+            "fileVersion": "6.0.0.0",
+            "localPath": "runtimes/win-x86/native/raylib.dll"
           }
         }
       }

@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace LIBERTAS_AVT_CAEDES.Geometry
 {
-    public static class EldritchGeomertyDrawer
+    public static class EldritchGeometryDrawer
     {
         public static void DrawThickLine3D(Vector3 start, Vector3 end, float thickness, Color color)
         {

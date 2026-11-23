@@ -42,13 +42,13 @@ namespace LIBERTAS_AVT_CAEDES.Items
             {
                 case PickupKind.GoldOctahedron:
                     {
-                        EldritchGeomertyDrawer.DrawOctahedron(pos, new(.45f, .2f, .45f), Color.Gold);
+                        EldritchGeometryDrawer.DrawOctahedron(pos, new(.45f, .2f, .45f), Color.Gold);
                         break;
                     }
                 case PickupKind.ShotgunCylinder:
                     {
                         // Elliptical cylinder for the semi-auto shotgun
-                        EldritchGeomertyDrawer.DrawRegularPrism(pos, 16, .45f, .22f, .3f, Color.Orange);
+                        EldritchGeometryDrawer.DrawRegularPrism(pos, 16, .45f, .22f, .3f, Color.Orange);
                         break;
                     }
                 case PickupKind.RifleCylinder:
@@ -82,7 +82,7 @@ namespace LIBERTAS_AVT_CAEDES.Items
                             PickupKind.TalismanHexShield => Color.SkyBlue,
                             _ => Color.White
                         };
-                        EldritchGeomertyDrawer.DrawRegularPrism(pos, 5, .35f, .35f, .14f, talismanColor);
+                        EldritchGeometryDrawer.DrawRegularPrism(pos, 5, .35f, .35f, .14f, talismanColor);
                         break;
                     }
             }

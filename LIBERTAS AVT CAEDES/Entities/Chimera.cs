@@ -15,7 +15,7 @@ namespace LIBERTAS_AVT_CAEDES.Entities
         public void Draw(float dt)
         {
             if (Dead) return;
-            EldritchGeomertyDrawer
+            EldritchGeometryDrawer
                 .DrawFlexibleRightTrapezoidalPrism(Position, RotationY, dt, new(135, 30, 190, 255));
         }
     }

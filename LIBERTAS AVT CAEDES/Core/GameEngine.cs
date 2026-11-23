@@ -11,7 +11,8 @@ namespace LIBERTAS_AVT_CAEDES.Core
 {
     public enum ScreenState
     {
-        ConsentScreen,
+        MainMenu,
+        OptionsMenu,
         Playing,
         PostGameForm,
         Finished
@@ -25,11 +26,18 @@ namespace LIBERTAS_AVT_CAEDES.Core
             _adaptiveHPMult = 1f,
             _adaptivePerceptionMult = 1f;
 
-        private ScreenState _screen = ScreenState.ConsentScreen;
+        private ScreenState _screen = ScreenState.MainMenu;
+        private bool _shouldExit = false;
+
+        private readonly GameSettings _settings = new();
         private readonly Random _rng = new();
         private readonly Player _player = new();
         private readonly static LabyrinthLevel _level = new();
         private Camera3D _cam;
+
+        private RenderTexture2D _sceneTgt;
+        private Shader _bloomShader;
+        private int _resLoc;
 
         private Vector3
             _vaultStartPos,
@@ -56,17 +64,28 @@ namespace LIBERTAS_AVT_CAEDES.Core
 
         public void Run()
         {
+            if (_settings.AntiAliasingEnabled)
+                Raylib.SetConfigFlags(ConfigFlags.Msaa4xHint);
+
             Raylib.InitWindow(1280, 720, "LIBERTAS AVT CAEDES // Modular Raylib-cs 8.1.0");
             Raylib.SetTargetFPS(Raylib.GetMonitorRefreshRate(Raylib.GetCurrentMonitor()));
+            Raylib.SetExitKey(KeyboardKey.Null);
             Raylib.HideCursor();
 
-            while (!Raylib.WindowShouldClose())
+            _sceneTgt = Raylib.LoadRenderTexture(1280, 720);
+            _bloomShader = Raylib.LoadShaderFromMemory(null, GameSettings.BloomFragShader);
+            _resLoc = Raylib.GetShaderLocation(_bloomShader, "resolution");
+            float[] res = [1280f, 720f];
+            Raylib.SetShaderValue(_bloomShader, _resLoc, res, ShaderUniformDataType.Vec2);
+
+            while (!(Raylib.WindowShouldClose() || _shouldExit))
             {
-                float dt = Raylib.GetFrameTime();
-                Update(dt);
+                Update(Raylib.GetFrameTime());
                 Draw();
             }
 
+            Raylib.UnloadShader(_bloomShader);
+            Raylib.UnloadRenderTexture(_sceneTgt);
             Raylib.CloseWindow();
         }
 
@@ -74,43 +93,34 @@ namespace LIBERTAS_AVT_CAEDES.Core
         {
             switch (_screen)
             {
-                case ScreenState.ConsentScreen:
-                    UpdateConsentScreen();
-                    break;
                 case ScreenState.Playing:
                     UpdateGameplay(dt);
                     break;
                 case ScreenState.PostGameForm:
                     UpdateSurvey();
                     break;
+                case ScreenState.Finished:
+                    if (Raylib.IsKeyPressed(KeyboardKey.Enter) || Raylib.IsKeyPressed(KeyboardKey.Escape))
+                        _screen = ScreenState.MainMenu;
+                    break;
             }
         }
 
-        private void StartSession(bool consent)
+        private void StartNewRun()
         {
             PlayerTelemetry.ResetSession();
-            PlayerTelemetry.ConsentGranted = consent;
+            PlayerTelemetry.ConsentGranted = _settings.TelemetryConsent;
+
             LevelDiscoveryRates.Clear();
+            _currentStage = 1;
+            _adaptiveHPMult = 1f;
+            _adaptivePerceptionMult = 1f;
+
             _level.Generate(_currentStage, _adaptiveHPMult, _rng);
             _player.ResetForLevel(Vector3.Zero);
+
             Raylib.HideCursor();
             _screen = ScreenState.Playing;
-        }
-
-        private void UpdateConsentScreen()
-        {
-            Raylib.ShowCursor();
-            Vector2 mousePos = Raylib.GetMousePosition();
-            bool isLMBPressed = Raylib.IsMouseButtonPressed(MouseButton.Left);
-
-            Rectangle
-                consentBtn = new(190, 390, 410, 65),
-                declineBtn = new(640, 390, 430, 65);
-
-            if (Raylib.IsKeyPressed(KeyboardKey.Y) || (isLMBPressed && Raylib.CheckCollisionPointRec(mousePos, consentBtn)))
-                StartSession(true);
-            if (Raylib.IsKeyPressed(KeyboardKey.N) || (isLMBPressed && Raylib.CheckCollisionPointRec(mousePos, declineBtn)))
-                StartSession(false);
         }
 
         private void UpdateGameplay(float dt)
@@ -203,7 +213,8 @@ namespace LIBERTAS_AVT_CAEDES.Core
                     _level.Generate(_currentStage, _adaptiveHPMult, _rng);
                     _player.ResetForLevel(Vector3.Zero);
                 }
-                else _screen = ScreenState.PostGameForm;
+                else
+                    _screen = PlayerTelemetry.ConsentGranted ? ScreenState.PostGameForm : ScreenState.Finished;
             }
         }
 
@@ -457,12 +468,20 @@ namespace LIBERTAS_AVT_CAEDES.Core
         private void AlertAcolytesBySound(Vector3 origin, float radius)
         {
             float scaledRadius = radius * _adaptivePerceptionMult;
-            foreach (var a in _level.Acolytes.Where(a => !a.Dead && a.State is not AcolyteState.Combat))
+            foreach (Acolyte a in _level.Acolytes.Where(a => !a.Dead && a.State is not AcolyteState.Combat))
             {
-                if (Vector3.Distance(a.Position, origin) < scaledRadius)
+                float dist = Vector3.Distance(a.Position, origin);
+                if (dist <= scaledRadius)
                 {
-                    a.State = AcolyteState.Chasing;
+                    float
+                        proxRatio = 1f - (dist / scaledRadius),
+                        awarenessSpike = radius >= 20f ? (.55f + .35f * proxRatio) : (.25f + .25f * proxRatio);
+
+                    a.Awareness = MathF.Min(.95f, MathF.Max(a.Awareness, awarenessSpike));
                     a.LastKnownPlayerPosition = origin;
+
+                    if (a.Awareness >= .5f) a.State = AcolyteState.Chasing;
+                    else if (a.State is AcolyteState.Idle) a.State = AcolyteState.Suspicious;
                 }
             }
         }
@@ -536,6 +555,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
         private void UpdateHostilesAndRituals(float dt)
         {
             float sightRange = (13f + (_player.FlashlightOn ? 9f : 0)) * _adaptivePerceptionMult;
+            bool isCrouching = Raylib.IsKeyDown(KeyboardKey.LeftControl);
 
             foreach (Acolyte a in _level.Acolytes.Where(a => !a.Dead))
             {
@@ -549,88 +569,151 @@ namespace LIBERTAS_AVT_CAEDES.Core
 
                 float distToPlayer = Vector3.Distance(a.Position, _player.Position);
                 bool playerHiddenInCover = _player.CoverState is CoverMode.InCover;
+                bool canSeePlayer = distToPlayer < sightRange && !playerHiddenInCover && HasLineOfSight(a.Position, _player.Position);
 
-                if (a.State is AcolyteState.Idle)
+                if (a.State is AcolyteState.Idle or AcolyteState.Suspicious)
                 {
-                    foreach (var g in _level.Gore.Where(g => g.IsCorpseShard))
+                    foreach (GoreTriangle g in _level.Gore.Where(g => g.IsCorpseShard))
                     {
-                        if (Vector3.Distance(a.Position, g.Position) < 10f * _adaptivePerceptionMult)
+                        if (Vector3.Distance(a.Position, g.Position) < 10.5f * _adaptivePerceptionMult)
                         {
                             a.State = AcolyteState.Investigating;
                             a.LastKnownPlayerPosition = g.Position;
+                            a.Awareness = MathF.Max(a.Awareness, .6f);
                             break;
                         }
                     }
                 }
 
-                if (distToPlayer < sightRange && !playerHiddenInCover && HasLineOfSight(a.Position, _player.Position))
+                if (canSeePlayer)
                 {
-                    if (a.State is not AcolyteState.Combat and not AcolyteState.Conjuring)
-                    {
-                        if (_level.ActiveRitual is null && _rng.NextDouble() < .2)
-                        {
-                            a.State = AcolyteState.Conjuring;
-                            Vector3 safeRitualPos = _level.GetNearestWalkableCellCenter(a.Position, yHeight: 1.2f);
+                    Vector3 toPlayerDir = Vector3.Normalize(_player.Position - a.Position);
+                    Vector3 acolyteForward = new(MathF.Sin(a.RotationY), 0f, MathF.Cos(a.RotationY));
+                    float facingDot = Vector3.Dot(acolyteForward, toPlayerDir);
 
-                            _level.ActiveRitual = new DarkHypercubeRitual
-                            {
-                                Position = safeRitualPos,
-                                Countdown = 5f,
-                                Active = true,
-                                Conjurers = [a]
-                            };
+                    // Facing cone multiplier: 1.0x in front, 0.35x behind
+                    float coneMult = facingDot > 0.2f ? 1.0f : 0.35f;
+                    // Distance multiplier: fills much faster at close range
+                    float distFactor = Math.Clamp(1.35f - (distToPlayer / sightRange), 0.35f, 1.5f);
+                    // Stance & Flashlight modifiers
+                    float stealthMult = 1.0f;
+                    if (_player.CoverState is CoverMode.Peeking) stealthMult *= 0.55f;
+                    if (isCrouching) stealthMult *= 0.65f;
+                    if (_player.FlashlightOn) stealthMult *= 1.85f;
+
+                    float fillRate = 0.85f * _adaptivePerceptionMult * coneMult * distFactor * stealthMult;
+                    a.Awareness = MathF.Min(1.0f, a.Awareness + fillRate * dt);
+                    a.LastKnownPlayerPosition = _player.Position;
+
+                    // Smoothly turn toward the player as suspicion rises
+                    float targetAngle = MathF.Atan2(toPlayerDir.X, toPlayerDir.Z);
+                    a.RotationY = targetAngle;
+
+                    // Threshold 1: Suspicious (0.20 -> 0.49)
+                    if (a.Awareness >= 0.20f && a.Awareness < 0.50f && a.State is AcolyteState.Idle)
+                        a.State = AcolyteState.Suspicious;
+
+                    // Threshold 2: High Alert / Investigating Last Known Position (0.50 -> 0.99)
+                    else if (a.Awareness >= 0.50f && a.Awareness < 1.0f && a.State is not AcolyteState.Combat and not AcolyteState.Conjuring)
+                        a.State = AcolyteState.Chasing;
+
+                    // Threshold 3: Fully Busted (1.00 -> Combat!)
+                    else if (a.Awareness >= 1.0f && a.State is not AcolyteState.Combat and not AcolyteState.Conjuring)
+                        TriggerAcolyteCombat(a);
+
+                }
+                else
+                {
+                    float drainRate = a.State is AcolyteState.Combat ? .08f : .22f;
+                    a.Awareness = MathF.Max(0f, a.Awareness - drainRate * dt);
+
+                    if (a.Awareness <= .05f && a.State is not AcolyteState.Conjuring)
+                        a.State = AcolyteState.Idle;
+                }
+
+                switch (a.State)
+                {
+                    case AcolyteState.Suspicious:
+                        // Holds position, scans toward LastKnownPlayerPos while meter fills
+                        Vector3 lookDir = a.LastKnownPlayerPosition - a.Position;
+                        if (lookDir.LengthSquared() > 0.01f)
+                            a.RotationY = MathF.Atan2(lookDir.X, lookDir.Z);
+                        break;
+
+                    case AcolyteState.Investigating:
+                    case AcolyteState.Chasing:
+                        Vector3 moveDir = a.LastKnownPlayerPosition - a.Position;
+                        if (moveDir.Length() > 1.25f)
+                        {
+                            a.RotationY = MathF.Atan2(moveDir.X, moveDir.Z);
+                            MoveAlongAStar(ref a.Position, a.LastKnownPlayerPosition, 3.8f, dt, ignoreCovers: false, entityHalfSize: 0.45f);
                         }
                         else
                         {
-                            a.State = AcolyteState.Combat;
-                            a.LastKnownPlayerPosition = _player.Position;
-                            PlayerTelemetry.PlayerBusted++;
+                            // Reached last known spot: scan around briefly before calming down
+                            a.RotationY += 1.8f * dt;
+                            if (a.Awareness < 0.25f) a.State = AcolyteState.Idle;
                         }
-                    }
-                }
+                        break;
 
-                if (a.State is AcolyteState.Investigating or AcolyteState.Chasing)
-                {
-                    if (Vector3.Distance(a.Position, a.LastKnownPlayerPosition) > 1.2f)
-                        MoveAlongAStar(ref a.Position, a.LastKnownPlayerPosition, 3.9f, dt, ignoreCovers: false, entityHalfSize: .45f);
-                    else
-                        a.State = AcolyteState.Idle;
-                }
-                else if (a.State is AcolyteState.Combat)
-                {
-                    if (distToPlayer > 7f || !HasLineOfSight(a.Position, _player.Position))
-                        MoveAlongAStar(ref a.Position, _player.Position, 4.5f, dt, ignoreCovers: false, entityHalfSize: .45f);
+                    case AcolyteState.Combat:
+                        Vector3 toPlayer = _player.Position - a.Position;
+                        if (toPlayer.LengthSquared() > 0.01f)
+                            a.RotationY = MathF.Atan2(toPlayer.X, toPlayer.Z);
 
-                    a.FireCooldown -= dt;
-                    if (a.FireCooldown <= 0 && HasLineOfSight(a.Position, _player.Position))
-                    {
-                        a.FireCooldown = 1.15f;
-                        Hostage? nearbyHostage = _level.Hostages.FirstOrDefault(h =>
-                            !h.Dead && !h.Saved && Vector3.Distance(a.Position, h.Position) < 10f && HasLineOfSight(a.Position, h.Position));
-                        Vector3 tgtPos = (nearbyHostage is not null && _rng.NextDouble() < .35)
-                            ? nearbyHostage.Position
-                            : _player.Position;
+                        if (distToPlayer > 7.5f || !HasLineOfSight(a.Position, _player.Position))
+                            MoveAlongAStar(ref a.Position, _player.Position, 4.6f, dt, ignoreCovers: false, entityHalfSize: 0.45f);
 
-                        _level.Tracers.Add(new()
+                        else
                         {
-                            Start = a.Position + new Vector3(0, .6f, 0),
-                            End = tgtPos + new Vector3(0, .5f, 0),
-                            Color = Color.Red,
-                            TimeLeft = .14f
-                        });
-
-                        if (nearbyHostage is not null && tgtPos == nearbyHostage.Position)
-                        {
-                            nearbyHostage.HP -= 25f;
-                            SpawnGore(nearbyHostage.Position, false, 5);
-                            if (nearbyHostage.HP <= 0)
+                            // Tactical lateral strafing during firefight
+                            a.StrafeTimer -= dt;
+                            if (a.StrafeTimer <= 0f)
                             {
-                                nearbyHostage.Dead = true;
-                                SpawnGore(nearbyHostage.Position, true, 12);
+                                a.StrafeTimer = 1.2f + (float)_rng.NextDouble() * 1.2f;
+                                a.StrafeDirection = _rng.NextDouble() < 0.5 ? 1f : -1f;
                             }
+
+                            Vector3 forward = Vector3.Normalize(new Vector3(toPlayer.X, 0f, toPlayer.Z));
+                            Vector3 strafeVec = new(-forward.Z * a.StrafeDirection, 0f, forward.X * a.StrafeDirection);
+                            Vector3 strafeTarget = a.Position + strafeVec * 2.5f * dt;
+                            if (!_level.CollidesWithWorld(strafeTarget, ignoreCovers: false, halfSize: 0.45f))
+                                a.Position = strafeTarget;
                         }
-                        else _player.TakeDamage(15f, _rng, SpawnGore);
-                    }
+
+                        // Fire visible scarlet raycasts at Player (or nearby Hostages)
+                        a.FireCooldown -= dt;
+                        if (a.FireCooldown <= 0f && HasLineOfSight(a.Position, _player.Position))
+                        {
+                            a.FireCooldown = 1.15f;
+                            Hostage? nearHostage = _level.Hostages.FirstOrDefault(h =>
+                                !h.Dead && !h.Saved && Vector3.Distance(a.Position, h.Position) < 10f && HasLineOfSight(a.Position, h.Position));
+                            Vector3 targetPos = (nearHostage is not null && _rng.NextDouble() < 0.35)
+                                ? nearHostage.Position
+                                : _player.Position;
+
+                            _level.Tracers.Add(new()
+                            {
+                                Start = a.Position + new Vector3(0, 0.6f, 0),
+                                End = targetPos + new Vector3(0, 0.5f, 0),
+                                Color = Color.Red,
+                                TimeLeft = 0.14f
+                            });
+
+                            if (nearHostage is not null && targetPos == nearHostage.Position)
+                            {
+                                nearHostage.HP -= 25f;
+                                SpawnGore(nearHostage.Position, false, 5);
+                                if (nearHostage.HP <= 0)
+                                {
+                                    nearHostage.Dead = true;
+                                    SpawnGore(nearHostage.Position, true, 12);
+                                }
+                            }
+                            else
+                                _player.TakeDamage(18f, _rng, SpawnGore);
+                        }
+                        break;
                 }
             }
 
@@ -693,6 +776,40 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 t.TimeLeft -= dt;
                 if (t.TimeLeft <= 0) _level.Tracers.RemoveAt(i);
                 else _level.Tracers[i] = t;
+            }
+        }
+
+        private void TriggerAcolyteCombat(Acolyte alertingAcolyte)
+        {
+            alertingAcolyte.State = AcolyteState.Combat;
+            alertingAcolyte.Awareness = 1.0f;
+            PlayerTelemetry.PlayerBusted++;
+
+            // Squad Alert: nearby Acolytes within 14m hear the shout and converge to investigate
+            foreach (Acolyte ally in _level.Acolytes
+                .Where(x => !x.Dead && x != alertingAcolyte && x.State is not AcolyteState.Combat))
+            {
+                if (Vector3.Distance(ally.Position, alertingAcolyte.Position) < 14f * _adaptivePerceptionMult)
+                {
+                    ally.Awareness = MathF.Max(ally.Awareness, 0.70f);
+                    ally.LastKnownPlayerPosition = _player.Position;
+                    ally.State = AcolyteState.Chasing;
+                }
+            }
+
+            // 5% chance to conjure a Chimera from a Dark Hypercube at a verified walkable cell center
+            if (_level.ActiveRitual is null && _rng.NextDouble() < 0.05)
+            {
+                alertingAcolyte.State = AcolyteState.Conjuring;
+                Vector3 safeRitualPos = _level.GetNearestWalkableCellCenter(alertingAcolyte.Position, yHeight: 1.2f);
+
+                _level.ActiveRitual = new()
+                {
+                    Position = safeRitualPos,
+                    Countdown = 30.0f,
+                    Active = true,
+                    Conjurers = [alertingAcolyte]
+                };
             }
         }
 
@@ -769,14 +886,27 @@ namespace LIBERTAS_AVT_CAEDES.Core
         private void Draw()
         {
             Raylib.BeginDrawing();
-            Raylib.ClearBackground(new Color(8, 6, 12, 255));
+            Raylib.ClearBackground(new(8, 6, 12, 255));
 
             switch (_screen)
             {
-                case ScreenState.ConsentScreen: DrawConsentModal(); break;
+                case ScreenState.MainMenu:
+                    switch (MenuRenderer.UpdateAndDrawMainMenu())
+                    {
+                        case MenuAction.StartRun: StartNewRun(); break;
+                        case MenuAction.OpenOptions: _screen = ScreenState.OptionsMenu; break;
+                        case MenuAction.ExitGame: _shouldExit = true; break;
+                    }
+                    break;
+                case ScreenState.OptionsMenu:
+                    if (MenuRenderer.UpdateAndDrawOptionsMenu(_settings) is MenuAction.BackToMain) _screen = ScreenState.MainMenu;
+                    break;
                 case ScreenState.Playing:
                     {
                         float t = (float)Raylib.GetTime();
+
+                        Raylib.BeginTextureMode(_sceneTgt);
+                        Raylib.ClearBackground(new(8, 6, 12, 255));
                         Raylib.BeginMode3D(_cam);
 
                         _level.DrawEnvironment(t);
@@ -785,7 +915,7 @@ namespace LIBERTAS_AVT_CAEDES.Core
                         foreach (GoreTriangle g in _level.Gore) g.Draw();
                         foreach (PickupItem p in _level.Pickups) p.Draw(t);
                         foreach (Hostage h in _level.Hostages) h.Draw();
-                        foreach (Acolyte a in _level.Acolytes) a.Draw();
+                        foreach (Acolyte a in _level.Acolytes) a.Draw(_cam, t);
                         foreach (Chimera c in _level.Chimeras) c.Draw(t);
                         _player.Draw();
 
@@ -793,28 +923,60 @@ namespace LIBERTAS_AVT_CAEDES.Core
                             Raylib.DrawLine3D(tracer.Start, tracer.End, tracer.Color);
 
                         Raylib.EndMode3D();
+                        Raylib.EndTextureMode();
+
+                        Rectangle srcRect = new(0, 0, _sceneTgt.Texture.Width, -_sceneTgt.Texture.Height);
+                        if (_settings.BloomEnabled)
+                        {
+                            Raylib.BeginShaderMode(_bloomShader);
+                            Raylib.DrawTextureRec(_sceneTgt.Texture, srcRect, Vector2.Zero, Color.White);
+                            Raylib.EndShaderMode();
+                        }
+                        else
+                            Raylib.DrawTextureRec(_sceneTgt.Texture, srcRect, Vector2.Zero, Color.White);
+
+                        foreach (Acolyte a in _level.Acolytes)
+                            a.DrawPerceptionGauge(_cam, t);
 
                         DrawTacticalHud();
+                        DrawCrosshair();
                         break;
                     }
-                case ScreenState.PostGameForm: DrawSurveyModal(); break;
+                case ScreenState.PostGameForm:
+                    DrawSurveyModal();
+                    break;
                 case ScreenState.Finished:
-                    {
-                        PlayerTelemetry.TotalDiscoveryRate = LevelDiscoveryRates.Average(x => x.Value);
-                        Raylib.DrawRectangle(140, 140, 1000, 440, new Color(14, 12, 22, 245));
-                        Raylib.DrawRectangleLinesEx(new Rectangle(140, 140, 1000, 440), 3f, Color.Green);
-                        Raylib.DrawText("RESEARCH TELEMETRY & SURVEY LOGGED", 180, 175, 28, Color.Green);
-                        Raylib.DrawText($"Session GUID: {PlayerTelemetry.SessionGuid}", 180, 225, 18, Color.Gold);
-                        Raylib.DrawText($"Self-Reported Ratings -> Aggression: {PlayerTelemetry.SelfSurveyAggro}/5 | Stealth: {PlayerTelemetry.SelfSurveyStealth}/5 | Exploration: {PlayerTelemetry.SelfSurveyDiscovery}/5", 180, 265, 18, Color.RayWhite);
-                        Raylib.DrawText($"Telemetry CSV successfully written to: telemetry_{PlayerTelemetry.SessionGuid}.csv", 180, 330, 18, Color.LightGray);
-                        Raylib.DrawText("Press ESC to exit testing suite.", 180, 420, 20, Color.Yellow);
-                        break;
-                    }
+                    DrawFinishedModal();
+                    break;
+
             }
 
             DrawCrosshair();
 
             Raylib.EndDrawing();
+        }
+
+        private void DrawFinishedModal()
+        {
+            if (PlayerTelemetry.ConsentGranted)
+            {
+                PlayerTelemetry.TotalDiscoveryRate = LevelDiscoveryRates.Average(x => x.Value);
+                Raylib.DrawRectangle(140, 140, 1000, 440, new Color(14, 12, 22, 245));
+                Raylib.DrawRectangleLinesEx(new Rectangle(140, 140, 1000, 440), 3f, Color.Green);
+                Raylib.DrawText("RESEARCH TELEMETRY & SURVEY LOGGED", 180, 175, 28, Color.Green);
+                Raylib.DrawText($"Session GUID: {PlayerTelemetry.SessionGuid}", 180, 225, 18, Color.Gold);
+                Raylib.DrawText($"Self-Reported Ratings -> Aggression: {PlayerTelemetry.SelfSurveyAggro}/5 | Stealth: {PlayerTelemetry.SelfSurveyStealth}/5 | Exploration: {PlayerTelemetry.SelfSurveyDiscovery}/5", 180, 265, 18, Color.RayWhite);
+                Raylib.DrawText($"Telemetry CSV successfully written to: telemetry_{PlayerTelemetry.SessionGuid}.csv", 180, 330, 18, Color.LightGray);
+                Raylib.DrawText("Thank you for playing!", 180, 420, 28, Color.Green);
+                Raylib.DrawText("Press ESC to exit testing suite.", 180, 480, 20, Color.Yellow);
+            }
+            else
+            {
+                Raylib.DrawRectangle(220, 220, 840, 260, new Color(14, 12, 22, 245));
+                Raylib.DrawRectangleLinesEx(new Rectangle(220, 220, 840, 260), 3f, Color.Green);
+                Raylib.DrawText("MISSION COMPLETE — THANKS FOR PLAYING!", 270, 280, 30, Color.Green);
+                Raylib.DrawText("Press [ESC] or [ENTER] to go back to the Main Menu.", 270, 355, 22, Color.RayWhite);
+            }
         }
 
         private void DrawTacticalHud()
@@ -877,30 +1039,6 @@ namespace LIBERTAS_AVT_CAEDES.Core
                 Raylib.DrawRectangleLinesEx(new(310, 175, 660, 54), 3f, Color.Magenta);
                 Raylib.DrawText($"DARK HYPERCUBE CONJURING: {_level.ActiveRitual.Countdown:F1}s! FOLLOW A* GPS ARROW!", 330, 192, 20, Color.Magenta);
             }
-        }
-
-        private static void DrawConsentModal()
-        {
-            Raylib.DrawRectangle(140, 130, 1000, 440, new(16, 14, 24, 245));
-            Raylib.DrawRectangleLinesEx(new(140, 130, 1000, 440), 3f, Color.Red);
-            Raylib.DrawText("LIBERTAS AUT CAEDES // TELEMETRY CONSENT", 190, 175, 32, Color.Red);
-            Raylib.DrawText($"Anonymous Tester ID: {PlayerTelemetry.SessionGuid}", 190, 235, 20, Color.Gold);
-            Raylib.DrawText("This research build uses an Observer-Logger architecture to record anonymous", 190, 285, 20, Color.RayWhite);
-            Raylib.DrawText("gameplay ratios (hostages, combat, 30s traversal distance, and DFS discovery).", 190, 315, 20, Color.RayWhite);
-
-            Vector2 mousePos = Raylib.GetMousePosition();
-
-            Rectangle consentBtn = new(190, 390, 410, 65);
-            bool consentHover = Raylib.CheckCollisionPointRec(mousePos, consentBtn);
-            Raylib.DrawRectangleRec(consentBtn, consentHover ? new(30, 95, 45, 255) : new(20, 65, 30, 255));
-            Raylib.DrawRectangleLinesEx(consentBtn, consentHover ? 3f : 2f, consentHover ? Color.RayWhite : Color.Lime);
-            Raylib.DrawText("[Press Y / Click] CONSENT & LAUNCH", 230, 412, 18, Color.Lime);
-
-            Rectangle declineBtn = new(640, 390, 430, 65);
-            bool declineHover = Raylib.CheckCollisionPointRec(mousePos, declineBtn);
-            Raylib.DrawRectangleRec(declineBtn, declineHover ? new(95, 30, 35, 255) : new(65, 20, 25, 255));
-            Raylib.DrawRectangleLinesEx(declineBtn, declineHover ? 3f : 2f, declineHover ? Color.RayWhite : Color.Red);
-            Raylib.DrawText("[Press N] DECLINE (PLAY OFFLINE)", 685, 412, 18, Color.RayWhite);
         }
 
         private void DrawSurveyModal()

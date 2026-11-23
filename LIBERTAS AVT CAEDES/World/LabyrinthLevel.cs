@@ -176,9 +176,9 @@ namespace LIBERTAS_AVT_CAEDES.World
                     v1 = light + new Vector3(-1.8f, 0, 1.5f),
                     v2 = light + new Vector3(1.8f, 0, 1.5f);
                 Raylib.DrawTriangle3D(v0, v1, v2, new(48, 22, 40, 190));
-                EldritchGeomertyDrawer.DrawThickLine3D(v0, v1, .03f, new(110, 45, 90, 255));
-                EldritchGeomertyDrawer.DrawThickLine3D(v1, v2, .03f, new(110, 45, 90, 255));
-                EldritchGeomertyDrawer.DrawThickLine3D(v2, v0, .03f, new(110, 45, 90, 255));
+                EldritchGeometryDrawer.DrawThickLine3D(v0, v1, .03f, new(110, 45, 90, 255));
+                EldritchGeometryDrawer.DrawThickLine3D(v1, v2, .03f, new(110, 45, 90, 255));
+                EldritchGeometryDrawer.DrawThickLine3D(v2, v0, .03f, new(110, 45, 90, 255));
             }
 
             foreach (BoundingBox w in Walls)
@@ -187,7 +187,7 @@ namespace LIBERTAS_AVT_CAEDES.World
                     c = (w.Min + w.Max) * .5f,
                     s = w.Max - w.Min;
                 Raylib.DrawCubeV(c, s, new(24, 22, 32, 255));
-                EldritchGeomertyDrawer.DrawThickWireBox(c, s, .045f, new(60, 40, 75, 255));
+                EldritchGeometryDrawer.DrawThickWireBox(c, s, .045f, new(60, 40, 75, 255));
             }
 
             foreach (BoundingBox cov in Covers)
@@ -196,10 +196,10 @@ namespace LIBERTAS_AVT_CAEDES.World
                     c = (cov.Min + cov.Max) * .5f,
                     s = cov.Max - cov.Min;
                 Raylib.DrawCubeV(c, s, new(45, 48, 60, 255));
-                EldritchGeomertyDrawer.DrawThickWireBox(c, s, .04f, Color.Gray);
+                EldritchGeometryDrawer.DrawThickWireBox(c, s, .04f, Color.Gray);
             }
 
-            EldritchGeomertyDrawer.DrawHypercube(BrightHypercubeArtifactPos, 1.8f, dt, Color.Gold, Color.SkyBlue);
+            EldritchGeometryDrawer.DrawHypercube(BrightHypercubeArtifactPos, 1.8f, dt, Color.Gold, Color.SkyBlue);
         }
 
         public Vector3 GetNearestWalkableCellCenter(Vector3 worldPos, float yHeight = 0f)

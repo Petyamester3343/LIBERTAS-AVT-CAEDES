@@ -19,7 +19,7 @@ namespace LIBERTAS_AVT_CAEDES.World
             if (!Active) return;
 
             // Draw the dark portal
-            EldritchGeomertyDrawer.DrawHypercube(Position, 2f, 2f * dt, Color.Purple, Color.Maroon);
+            EldritchGeometryDrawer.DrawHypercube(Position, 2f, 2f * dt, Color.Purple, Color.Maroon);
 
             // A*
             List<Vector3> path = Pathfinder.FindPath(playerPos, Position, walkableCells, cellSize);
@@ -38,7 +38,7 @@ namespace LIBERTAS_AVT_CAEDES.World
             Raylib.DrawCylinderEx(arrowShaftEnd, arrowTip, .32f, 0, 8, Color.Gold);
 
             for (int i = 0; i < path.Count - 1; i++)
-                EldritchGeomertyDrawer
+                EldritchGeometryDrawer
                     .DrawThickLine3D(path[i] + new Vector3(0, .12f, 0),
                                      path[i + 1] + new Vector3(0, .12f, 0),
                                      .04f,
